@@ -1,0 +1,41 @@
+//Q: Solve the s-wave Schrodinger equation for the ground state and the first excited state of the hydrogen atom under the columb potential.
+funcprot(0)
+clc 
+clf 
+clear 
+m=0.511D6
+hbar=1973
+e=3.795
+r0=1D-8 
+rn=40
+n=500
+r=linspace(r0,rn,n)
+D=r(2)-r(1)
+V=-e*e./r 
+C=2*m*D*D/(hbar*hbar)
+for i=1:n-3
+    A(i,i)=(2+C*V(i+1))
+    A(i,i+1)=-1
+    A(i+1,i)=-1
+end
+A(n-2,n-2)=(2+C*V(n-1))
+A=A./C
+[V,E]=spec(A)
+Energy=diag(E)
+for i=1:2
+    mprintf("\n E(%d)=%2.5f ev",i,Energy(i))
+end
+np=100
+zm=zeros(1,np)
+psi0=[0;V(:,1);0]
+psi1=[0;V(:,2);0]
+plot(r(1:np),psi0(1:np),'r-*',r(1:np),psi1(1:np),'-+',r(1:np),zm(1:np),'black--')
+
+a=gca()
+a.thickness=2
+a.box="on"
+a.children.children.thickness=1
+title("Energy Eigenfunctions","fontsize",4,"fontname",2)
+xlabel("r in Angstrom","fontsize",3,"fontname",3)
+ylabel("Wave Function","fontsize",3,"fontname",3)
+legend(["Ground State( "+string(Energy(1))+"ev)","First Excited State( "+string(Energy(2))+"ev)"],[4])
